@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#define VERSION "1.0"
+#define VERSION "1.01"
 #define PKEY "2 54 86 52 2 15 32 58 62 42 1 6 85 215 364 8"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -58,7 +58,7 @@ void MainWindow::Authentication(QNetworkReply *reply, QAuthenticator *auth)
 
 void MainWindow::Process_Find()
 {
-
+    ui->listTorrent->setEnabled(false);
     QSettings settings("Yggtorrent-download");
     settings.setValue("Find",ui->eFind->text());
 
@@ -156,6 +156,7 @@ void MainWindow::Process_Find()
     }
     ui->bFind->setEnabled(true);
     connect(ui->listTorrent,SIGNAL(cellDoubleClicked(int,int)),this,SLOT(SaveTorrent(int)));
+    ui->listTorrent->setEnabled(true);
 }
 
 void MainWindow::Wait(int sec)
@@ -187,6 +188,7 @@ bool MainWindow::SaveHtml()
 
 void MainWindow::SaveTorrent(int row)
 {
+    ui->listTorrent->setEnabled(false);
     QString link = ui->listTorrent->item(row,5)->text();
 
     ui->bFind->setEnabled(false);
@@ -242,6 +244,7 @@ void MainWindow::SaveTorrent(int row)
     }
     ui->bFind->setEnabled(true);
     connect(ui->listTorrent,SIGNAL(cellDoubleClicked(int,int)),this,SLOT(SaveTorrent(int)));
+    ui->listTorrent->setEnabled(true);
 }
 
 void MainWindow::StartDownload(QWebEngineDownloadItem *down)
