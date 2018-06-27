@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#define VERSION "1.01"
+QString version = "1.01";
 #define PKEY "2 54 86 52 2 15 32 58 62 42 1 6 85 215 364 8"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -10,10 +10,17 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     web = new QWebEngineView;
+    web->setObjectName("web");
+   // web->show();
+    rt = new QWebEngineView;
+    rt->setObjectName("rt");
+    //rt->show();
 
     QDir d;
     d.mkdir("download");
-    test();
+    timer2.setSingleShot(false);
+    timer2.setInterval(10000);
+
     QSettings settings("Yggtorrent-download");
     ui->eFind->setText(settings.value("Find").toString());
 
@@ -24,6 +31,15 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionQuitter,SIGNAL(triggered(bool)),qApp,SLOT(quit()));
     connect(ui->actionOptions,SIGNAL(triggered(bool)),this,SLOT(Show_Options()));
     connect(web->page(),SIGNAL(authenticationRequired(QUrl,QAuthenticator*)),this,SLOT(Authentication(QUrl,QAuthenticator*)));
+    connect(ui->actionA_Propos_de_Qt,SIGNAL(triggered(bool)),qApp,SLOT(aboutQt()));
+    connect(ui->actionA_Propos,SIGNAL(triggered(bool)),this,SLOT(About()));
+    connect(&timer2,SIGNAL(timeout()),this,SLOT(UpdateDownCount()));
+    //connect(&timer2,SIGNAL(timeout()),&timer2,SLOT(stop()));
+    connect(web,SIGNAL(loadProgress(int)),this,SLOT(Load(int)));
+    connect(rt->page(),SIGNAL(authenticationRequired(QUrl,QAuthenticator*)),this,SLOT(Authentication(QUrl,QAuthenticator*)));
+
+    ui->downCount->setText("Init...");
+    timer2.start();
 }
 
 MainWindow::~MainWindow()
@@ -35,9 +51,22 @@ MainWindow::~MainWindow()
     d.removeRecursively();
 }
 
-void MainWindow::test()
+void MainWindow::About()
 {
-
+    QFormLayout *layout = new QFormLayout;
+    QLabel vVersion(version);
+    QLabel auteur("Kévin BRIAND");
+    QLabel licence("Ce logiciel est sous licence GNU LGPLv3");
+    QLabel github("<a href='https://github.com/firedream89?tab=repositories'>ici</a>");
+    github.setOpenExternalLinks(true);
+    layout->addRow("Version",&vVersion);
+    layout->addRow("Auteur",&auteur);
+    layout->addRow("Licence",&licence);
+    layout->addRow("Sources",&github);
+    QDialog *fen = new QDialog;
+    fen->setLayout(layout);
+    fen->setWindowTitle("A Propos de " + this->windowTitle());
+    fen->exec();
 }
 
 void MainWindow::Authentication(QUrl url, QAuthenticator *auth)
@@ -46,6 +75,37 @@ void MainWindow::Authentication(QUrl url, QAuthenticator *auth)
     auth->setUser(settings.value("loginrt").toString());
     auth->setPassword(settings.value("mdprt").toString());
     qDebug() << "auth required";
+}
+
+void MainWindow::UpdateDownCount()
+{
+    QTimer *t = new QTimer;
+    QEventLoop *lp = new QEventLoop;
+
+    connect(t,SIGNAL(timeout()),lp,SLOT(quit()));
+    connect(rt,SIGNAL(loadFinished(bool)),lp,SLOT(quit()));
+
+    QSettings settings("Yggtorrent-download");
+    QUrl url("http://" + settings.value("ip").toString() + "/rutorrent/");
+    qDebug() << "UpdateDownCount started";
+
+
+    if(url != rt->url())
+    {
+        qDebug() << "Load rutorrent" << url.toString();
+        rt->load(url);
+        t->start(10000);
+        lp->exec();
+        t->start(10000);
+        lp->exec();
+    }
+
+        QString var = InsertJavaScript(rt,"theWebUI.labels['-_-_-dls-_-_-'];").toString();
+        ui->downCount->setText(var);
+        qDebug() << var;
+        if(ui->downCount->text().toInt() == 0)
+            timer2.stop();
+    qDebug() << "UpdateDownCount finished";
 }
 
 void MainWindow::Authentication(QNetworkReply *reply, QAuthenticator *auth)
@@ -161,8 +221,12 @@ void MainWindow::Process_Find()
 
 void MainWindow::Wait(int sec)
 {
-    timer.start(sec*1000);
-    loop.exec();
+    QTimer t;
+    QEventLoop l;
+    connect(&t,SIGNAL(timeout()),&l,SLOT(quit()));
+    connect(web,SIGNAL(loadFinished(bool)),&l,SLOT(quit()));
+    t.start(sec*1000);
+    l.exec();
 }
 
 bool MainWindow::SaveHtml()
@@ -217,9 +281,9 @@ void MainWindow::SaveTorrent(int row)
             if(text.contains("<td colspan=\"5\"><a onclick=") && lvl == 0)
             {
                 QSettings settings("Yggtorrent-download");
-                InsertJavaScript("document.getElementsByName('id')[1].value = '" + settings.value("Login").toString() + "';");
-                InsertJavaScript("document.getElementsByName('pass')[0].value = '" + settings.value("pwd").toString() + "';");
-                InsertJavaScript("document.getElementsByClassName('ico_unlock')[0].click()");
+                InsertJavaScript(web,"document.getElementsByName('id')[1].value = '" + settings.value("Login").toString() + "';");
+                InsertJavaScript(web,"document.getElementsByName('pass')[0].value = '" + settings.value("pwd").toString() + "';");
+                InsertJavaScript(web,"document.getElementsByClassName('ico_unlock')[0].click()");
                 Wait(5);
                 qDebug() << "end Connexion";
                 lvl++;
@@ -260,13 +324,14 @@ void MainWindow::StartDownload(QWebEngineDownloadItem *down)
     ui->listTorrent->item(ui->listTorrent->currentRow(),0)->setBackgroundColor(blue);
 }
 
-QVariant MainWindow::InsertJavaScript(QString script)
+QVariant MainWindow::InsertJavaScript(QWebEngineView *view, QString script)
 {
     bool end(false);
     QVariant r;
-    web->page()->runJavaScript(script, [&r,&end](const QVariant &result){ r = result; end = true; });
+    view->page()->runJavaScript(script, [&r,&end](const QVariant &result){ r = result; end = true; });
     while(end == false)
     {
+        qDebug() << "wait javascript return, result=" << r;
         Wait(0.5);
     }
     return r;
@@ -503,4 +568,11 @@ void MainWindow::SendRequestToruTorrent(QString filename)
          ui->result->setText(filename + " ajouté au serveur avec succès !");
      else
         ui->result->setText(filename + " n'a pas été ajouté sur le serveur");
+
+     timer2.start(10000);
+}
+
+void MainWindow::Load(int progress)
+{
+    ui->result->setText("Chargement..." + QString::number(progress) + "%");
 }

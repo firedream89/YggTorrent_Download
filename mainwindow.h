@@ -34,8 +34,7 @@ public:
     ~MainWindow();
     void Wait(int sec);
     bool SaveHtml();
-    QVariant InsertJavaScript(QString script);
-    void test();
+    QVariant InsertJavaScript(QWebEngineView *view, QString script);
     QString Encrypt(QString text);
     QString Decrypt(QString text);
 
@@ -50,12 +49,20 @@ private slots:
     void SendRequestToruTorrent(QString filename = 0);
     void Import();
     void Export();
+    void UpdateDownCount();
+    void About();
+    void Load(int progress);
+
+signals:
+    void finished();
 
 private:
     Ui::MainWindow *ui;
     QWebEngineView *web;
+    QWebEngineView *rt;
     QEventLoop loop;
     QTimer timer;
+    QTimer timer2;
     QString m_Filename;
 };
 

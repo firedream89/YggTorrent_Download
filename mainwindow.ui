@@ -15,13 +15,6 @@
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="1" column="0">
-     <widget class="QLabel" name="result">
-      <property name="text">
-       <string>Résultat</string>
-      </property>
-     </widget>
-    </item>
     <item row="0" column="0">
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
@@ -42,7 +35,32 @@
       </item>
      </layout>
     </item>
+    <item row="1" column="0">
+     <layout class="QFormLayout" name="formLayout">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Téléchargement en cours :</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="downCount">
+        <property name="text">
+         <string>0</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
     <item row="2" column="0">
+     <widget class="QLabel" name="result">
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
      <widget class="QTableWidget" name="listTorrent">
       <property name="minimumSize">
        <size>
@@ -99,6 +117,8 @@
     </property>
     <addaction name="separator"/>
     <addaction name="actionOptions"/>
+    <addaction name="actionA_Propos"/>
+    <addaction name="actionA_Propos_de_Qt"/>
     <addaction name="separator"/>
     <addaction name="actionQuitter"/>
    </widget>
@@ -113,6 +133,16 @@
   <action name="actionQuitter">
    <property name="text">
     <string>Quitter</string>
+   </property>
+  </action>
+  <action name="actionA_Propos">
+   <property name="text">
+    <string>A Propos</string>
+   </property>
+  </action>
+  <action name="actionA_Propos_de_Qt">
+   <property name="text">
+    <string>A Propos de Qt</string>
    </property>
   </action>
  </widget>
