@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-QString version = "1.02";
+QString version = "1.03";
 #define PKEY "2 54 86 52 2 15 32 58 62 42 1 6 85 215 364 8"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -158,17 +158,17 @@ void MainWindow::Process_Find(QString link)
     int resultCount(1),page(0);
     ui->result->setText("Chargement...");
 
-    //Si la variable link est saisie passage prioritaire
-    QString url;
-    if(link.isEmpty())
-        url = "https://yggtorrent.is/engine/search?name=" + text +
-                "&do=search&order=desc&sort=publish_date&page=" + QString::number(page) +
-                search;
-    else
-        url = link;
-
     while(page < resultCount)
     {
+        //Si la variable link est saisie passage prioritaire
+        QString url;
+        if(link.isEmpty())
+            url = "https://yggtorrent.is/engine/search?name=" + text +
+                    "&do=search&order=desc&sort=publish_date&page=" + QString::number(page) +
+                    search;
+        else
+            url = link + "&page=" + QString::number(page);
+
         ui->result->setText("Chargement..." + QString::number(page) + "/" + QString::number(resultCount));
         qDebug() << page << resultCount;
 
