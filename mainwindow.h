@@ -39,7 +39,7 @@ public:
     QString Decrypt(QString text);
 
 private slots:
-    void Process_Find();
+    void Process_Find(QString link = 0);
     void SaveTorrent(int row);
     void StartDownload(QWebEngineDownloadItem *down);
     void Show_Options();
@@ -52,6 +52,7 @@ private slots:
     void UpdateDownCount();
     void About();
     void Load(int progress);
+    void Top400();
 
 signals:
     void finished();

@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-QString version = "1.01";
+QString version = "1.02";
 #define PKEY "2 54 86 52 2 15 32 58 62 42 1 6 85 215 364 8"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -11,10 +11,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     web = new QWebEngineView;
     web->setObjectName("web");
-   // web->show();
     rt = new QWebEngineView;
     rt->setObjectName("rt");
-    //rt->show();
+    ui->listTorrent->horizontalHeader()->setStyleSheet("background-color: rgb(0,0,0);");
+    ui->reload->setEnabled(false);
 
     QDir d;
     d.mkdir("download");
@@ -25,17 +25,21 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->eFind->setText(settings.value("Find").toString());
 
     connect(&timer,SIGNAL(timeout()),&loop,SLOT(quit()));
+    connect(&timer2,SIGNAL(timeout()),this,SLOT(UpdateDownCount()));
+
     connect(web,SIGNAL(loadFinished(bool)),&loop,SLOT(quit()));
-    connect(ui->bFind,SIGNAL(clicked(bool)),this,SLOT(Process_Find()));
-    connect(web->page()->profile(),SIGNAL(downloadRequested(QWebEngineDownloadItem*)),this,SLOT(StartDownload(QWebEngineDownloadItem*)));
-    connect(ui->actionQuitter,SIGNAL(triggered(bool)),qApp,SLOT(quit()));
-    connect(ui->actionOptions,SIGNAL(triggered(bool)),this,SLOT(Show_Options()));
     connect(web->page(),SIGNAL(authenticationRequired(QUrl,QAuthenticator*)),this,SLOT(Authentication(QUrl,QAuthenticator*)));
+    connect(web,SIGNAL(loadProgress(int)),this,SLOT(Load(int)));
+    connect(web->page()->profile(),SIGNAL(downloadRequested(QWebEngineDownloadItem*)),this,SLOT(StartDownload(QWebEngineDownloadItem*)));
+
+    connect(ui->bFind,SIGNAL(clicked(bool)),this,SLOT(Process_Find()));
     connect(ui->actionA_Propos_de_Qt,SIGNAL(triggered(bool)),qApp,SLOT(aboutQt()));
     connect(ui->actionA_Propos,SIGNAL(triggered(bool)),this,SLOT(About()));
-    connect(&timer2,SIGNAL(timeout()),this,SLOT(UpdateDownCount()));
-    //connect(&timer2,SIGNAL(timeout()),&timer2,SLOT(stop()));
-    connect(web,SIGNAL(loadProgress(int)),this,SLOT(Load(int)));
+    connect(ui->actionQuitter,SIGNAL(triggered(bool)),qApp,SLOT(quit()));
+    connect(ui->actionOptions,SIGNAL(triggered(bool)),this,SLOT(Show_Options()));
+    connect(ui->reload,SIGNAL(clicked(bool)),this,SLOT(UpdateDownCount()));
+    connect(ui->top400,SIGNAL(clicked(bool)),this,SLOT(Top400()));
+
     connect(rt->page(),SIGNAL(authenticationRequired(QUrl,QAuthenticator*)),this,SLOT(Authentication(QUrl,QAuthenticator*)));
 
     ui->downCount->setText("Init...");
@@ -46,6 +50,7 @@ MainWindow::~MainWindow()
 {
     delete ui;
     delete web;
+    delete rt;
     QDir d;
     d.setPath("download/");
     d.removeRecursively();
@@ -79,18 +84,16 @@ void MainWindow::Authentication(QUrl url, QAuthenticator *auth)
 
 void MainWindow::UpdateDownCount()
 {
+    ui->reload->setEnabled(false);
     QTimer *t = new QTimer;
     QEventLoop *lp = new QEventLoop;
+    QSettings settings("Yggtorrent-download");
+    QUrl url("http://" + settings.value("ip").toString() + "/rutorrent/");
 
     connect(t,SIGNAL(timeout()),lp,SLOT(quit()));
     connect(rt,SIGNAL(loadFinished(bool)),lp,SLOT(quit()));
 
-    QSettings settings("Yggtorrent-download");
-    QUrl url("http://" + settings.value("ip").toString() + "/rutorrent/");
-    qDebug() << "UpdateDownCount started";
-
-
-    if(url != rt->url())
+    if(url != rt->url())//si page non chargé
     {
         qDebug() << "Load rutorrent" << url.toString();
         rt->load(url);
@@ -100,12 +103,15 @@ void MainWindow::UpdateDownCount()
         lp->exec();
     }
 
-        QString var = InsertJavaScript(rt,"theWebUI.labels['-_-_-dls-_-_-'];").toString();
-        ui->downCount->setText(var);
-        qDebug() << var;
-        if(ui->downCount->text().toInt() == 0)
-            timer2.stop();
-    qDebug() << "UpdateDownCount finished";
+    //Récupération de la variable téléchargement en cours
+    QString var = InsertJavaScript(rt,"theWebUI.labels['-_-_-dls-_-_-'];").toString();
+    ui->downCount->setText(var);
+
+    //Arret timer si plus aucun torrent en téléchargement
+    if(ui->downCount->text().toInt() == 0)
+        timer2.stop();
+    if(!timer2.isActive())
+        ui->reload->setEnabled(true);
 }
 
 void MainWindow::Authentication(QNetworkReply *reply, QAuthenticator *auth)
@@ -116,11 +122,29 @@ void MainWindow::Authentication(QNetworkReply *reply, QAuthenticator *auth)
     qDebug() << "auth required Manager" << reply->errorString();
 }
 
-void MainWindow::Process_Find()
+void MainWindow::Top400()
+{
+    Process_Find("https://ww1.yggtorrent.is/engine/search?name=&do=search&order=desc&sort=completed");
+}
+
+void MainWindow::Process_Find(QString link)
 {
     ui->listTorrent->setEnabled(false);
     QSettings settings("Yggtorrent-download");
     settings.setValue("Find",ui->eFind->text());
+
+    //si une catégorie de choisie, ajout de la variable GET
+    QString search,category(ui->comboBox->currentText());
+    if(category == "film")
+        search = "&category=2145";
+    else if(category == "musique")
+        search = "&category=2139";
+    else if(category == "application")
+        search = "&category=2144";
+    else if(category == "jeux video")
+        search = "&category=2142";
+    else if(category == "ebook")
+        search = "&category=2140";
 
     ui->bFind->setEnabled(false);
     disconnect(ui->listTorrent,SIGNAL(cellDoubleClicked(int,int)),this,SLOT(SaveTorrent(int)));
@@ -134,10 +158,21 @@ void MainWindow::Process_Find()
     int resultCount(1),page(0);
     ui->result->setText("Chargement...");
 
+    //Si la variable link est saisie passage prioritaire
+    QString url;
+    if(link.isEmpty())
+        url = "https://yggtorrent.is/engine/search?name=" + text +
+                "&do=search&order=desc&sort=publish_date&page=" + QString::number(page) +
+                search;
+    else
+        url = link;
+
     while(page < resultCount)
     {
+        ui->result->setText("Chargement..." + QString::number(page) + "/" + QString::number(resultCount));
         qDebug() << page << resultCount;
-        web->load(QUrl("https://yggtorrent.is/engine/search?name=" + text + "&do=search&order=desc&sort=publish_date&page=" + QString::number(page)));
+
+        web->load(QUrl(url));
         Wait(30);
         SaveHtml();
 
@@ -154,8 +189,9 @@ void MainWindow::Process_Find()
             QString tmp = flux.readLine();
             if(tmp.contains("<h2>Résultats de recherche <font style=\"float: right\">"))
             {
-                ui->result->setText(tmp.split(">").at(2).split("<").at(0));
-                resultCount = ui->result->text().split(" ").first().toInt();
+                resultCount = tmp.split(">").at(2).split("<").at(0).split(" ").first().toInt();
+                if(resultCount <= page+50)
+                    ui->result->setText(tmp.split(">").at(2).split("<").at(0));
             }
             if(tmp.contains("<a href=\"https://ww1.yggtorrent.is/torrent/"))
             {
@@ -180,15 +216,15 @@ void MainWindow::Process_Find()
                 }
                 int row = ui->listTorrent->rowCount();
                 ui->listTorrent->insertRow(row);
-                ui->listTorrent->setItem(row,0,new QTableWidgetItem(tmp.split(">").at(2)));
-                ui->listTorrent->setItem(row,1,new QTableWidgetItem(tmp.split("\"").at(3).split("/").at(5)));
-                ui->listTorrent->setItem(row,5,new QTableWidgetItem(tmp.split("\"").at(3)));
+                ui->listTorrent->setItem(row,0,new QTableWidgetItem(tmp.split(">").at(2)));//nom
+                ui->listTorrent->setItem(row,1,new QTableWidgetItem(tmp.split("\"").at(3).split("/").at(5)));//type
+                ui->listTorrent->setItem(row,5,new QTableWidgetItem(tmp.split("\"").at(3)));//lien
 
                 while(!flux.atEnd() && !tmp.contains("<td><div class=\"hidden\">"))
                 {
                     tmp = flux.readLine();
                 }
-                ui->listTorrent->setItem(row,2,new QTableWidgetItem(tmp.split(">").at(5).split("<").at(0)));
+                ui->listTorrent->setItem(row,2,new QTableWidgetItem(tmp.split(">").at(5).split("<").at(0)));//age
                 tmp = flux.readLine();
                 if(tmp.split(">").count() < 2)
                 {
@@ -198,7 +234,8 @@ void MainWindow::Process_Find()
                     return;
                 }
 
-                ui->listTorrent->setItem(row,3,new QTableWidgetItem(tmp.split(">").at(1).split("<").at(0)));
+                ui->listTorrent->setItem(row,3,new QTableWidgetItem(tmp.split(">").at(1).split("<").at(0)));//taille fichier
+                flux.readLine();
                 tmp = flux.readLine();
                 if(tmp.split(">").count() < 2)
                 {
@@ -207,13 +244,20 @@ void MainWindow::Process_Find()
                     connect(ui->listTorrent,SIGNAL(cellDoubleClicked(int,int)),this,SLOT(SaveTorrent(int)));
                     return;
                 }
-
-                ui->listTorrent->setItem(row,4,new QTableWidgetItem(tmp.split(">").at(1).split("<").at(0)));
+                ui->listTorrent->setItem(row,4,new QTableWidgetItem(tmp.split(">").at(1).split("<").at(0)));//seeder
+                if(tmp.split(">").at(1).split("<").at(0).toInt() < 5)//Si seeder <5
+                    ui->listTorrent->item(row,4)->setBackgroundColor(Qt::red);
             }
         }
         ui->listTorrent->resizeColumnsToContents();
         page += 50;
+        if(page > 400)//si plus de 400 résultats
+        {
+            page = resultCount;
+            ui->result->setText("Résultat supérieur à 400");
+        }
     }
+
     ui->bFind->setEnabled(true);
     connect(ui->listTorrent,SIGNAL(cellDoubleClicked(int,int)),this,SLOT(SaveTorrent(int)));
     ui->listTorrent->setEnabled(true);
@@ -359,12 +403,17 @@ void MainWindow::Show_Options()
     mdprt->setEchoMode(QLineEdit::Password);
     QPushButton *b = new QPushButton;
     b->setText("Enregistré");
+    b->setStyleSheet("QPushButton {border: 2px solid #8f8f91;border-radius: 6px;background-color: rgb(0, 0, 0);min-width: 80px;color: rgb(0, 255, 0);}"
+                 "QPushButton:hover {background-color: rgb(0, 255, 0);color: rgb(0, 0, 0);}"
+                "QPushButton:pressed{background-color: rgb(0, 0, 0);color: rgb(0, 255, 0);}");
     connect(b,SIGNAL(clicked(bool)),this,SLOT(Save_Options()));
     QPushButton *b2 = new QPushButton;
     b2->setText("Importer");
+    b2->setStyleSheet(b->styleSheet());
     connect(b2,SIGNAL(clicked(bool)),this,SLOT(Import()));
     QPushButton *b3 = new QPushButton;
     b3->setText("Exporter");
+    b3->setStyleSheet(b->styleSheet());
     connect(b3,SIGNAL(clicked(bool)),this,SLOT(Export()));
 
     l->addRow("Login yggtorrent",login);
