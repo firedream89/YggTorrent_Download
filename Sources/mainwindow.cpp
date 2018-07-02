@@ -13,7 +13,6 @@ MainWindow::MainWindow(QWidget *parent) :
     web->setObjectName("web");
     rt = new QWebEngineView;
     rt->setObjectName("rt");
-    ui->listTorrent->horizontalHeader()->setStyleSheet("background-color: rgb(0,0,0);");
     ui->reload->setEnabled(false);
 
     QDir d;
@@ -112,6 +111,15 @@ void MainWindow::UpdateDownCount()
         timer2.stop();
     if(!timer2.isActive())
         ui->reload->setEnabled(true);
+    SaveText(rt);
+
+    
+    //test
+    QFile file("web_Temp.txt");
+    if(!file.open(QIODevice::ReadOnly))
+        qDebug() << "Error open file";
+    qDebug() << file.readAll().split(' ').at(18).split('\n');
+    file.close();
 }
 
 void MainWindow::Authentication(QNetworkReply *reply, QAuthenticator *auth)
@@ -285,6 +293,28 @@ bool MainWindow::SaveHtml()
     connect(&timer,SIGNAL(timeout()),&loop,SLOT(quit()));
     connect(&timer,SIGNAL(timeout()),&timer,SLOT(stop()));
     web->page()->toHtml([&fichier,&end](const QString &result){ fichier.write(result.toUtf8()); end = true; });
+    while(end == false)
+    {
+        timer.start(500);
+        loop.exec();
+    }
+    fichier.close();
+    return true;
+}
+
+bool MainWindow::SaveText(QWebEngineView *view)
+{
+    bool end = false;
+
+    QFile fichier("web_Temp.txt");
+    fichier.resize(0);
+    if(fichier.open(QIODevice::WriteOnly) == false) { return false; }
+    QEventLoop loop;
+    QTimer timer;
+    connect(&timer,SIGNAL(timeout()),&loop,SLOT(quit()));
+    connect(&timer,SIGNAL(timeout()),&timer,SLOT(stop()));
+    QTextStream flux(&fichier);
+    view->page()->toPlainText([&fichier,&flux,&end](const QString result){fichier.write(result.toUtf8());end = true;});
     while(end == false)
     {
         timer.start(500);

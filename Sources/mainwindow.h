@@ -34,6 +34,7 @@ public:
     ~MainWindow();
     void Wait(int sec);
     bool SaveHtml();
+    bool SaveText(QWebEngineView *view);
     QVariant InsertJavaScript(QWebEngineView *view, QString script);
     QString Encrypt(QString text);
     QString Decrypt(QString text);
