@@ -60,10 +60,92 @@ public:
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QStringLiteral("MainWindow"));
         MainWindow->resize(1414, 619);
-        MainWindow->setStyleSheet(QLatin1String("background-color: rgb(0, 0, 0);\n"
+        MainWindow->setStyleSheet(QLatin1String("QWidget\n"
+"{\n"
+"background-color: rgb(0, 0, 0);\n"
 "selection-background-color: rgb(0, 255, 0);\n"
 "selection-color: rgb(0, 0, 0);\n"
-"color: rgb(0, 255, 0);"));
+"color: rgb(0, 255, 0);\n"
+"}\n"
+"QMenu\n"
+"{\n"
+"background-color: rgb(0, 0, 0);\n"
+"selection-background-color: rgb(0, 255, 0);\n"
+"selection-color: rgb(0, 0, 0);\n"
+"color: rgb(0, 255, 0);\n"
+"}\n"
+"QMenu:hover\n"
+"{\n"
+"background-color: rgb(0, 255, 0);\n"
+"color: rgb(0, 0, 0);\n"
+"}\n"
+"QTableView\n"
+"{\n"
+"	border: 0px;\n"
+"	background-color: rgb(0, 0, 0);\n"
+"	color: rgb(0, 255, 0);\n"
+"	gridline-color: rgb(53, 53, 53);\n"
+"}\n"
+"QTableView:section\n"
+"{\n"
+"	background-color: rgb(0, 0, 0);\n"
+"	color: rgb(0, 255, 0);\n"
+"}\n"
+"QHeaderView:section\n"
+"{\n"
+"	background-color: rgb(0, 0, 0);\n"
+"	color: rgb(0, 255, 0);\n"
+"}\n"
+"QTableView:disabled\n"
+"{\n"
+"	background-color: rgb(20, 20, 20);\n"
+"	color: rgb(0,0,0);\n"
+"}\n"
+"QPushButton {\n"
+"    border: 2px solid #8f8f91;\n"
+"    border-radius: 6px;    \n"
+"	background-color: rgb(0, 0, 0);\n"
+"    min-width: 80px;	\n"
+""
+                        "	color: rgb(0, 255, 0);\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"   \n"
+"	background-color: rgb(0, 255, 0);\n"
+"	color: rgb(0, 0, 0);\n"
+"}\n"
+"\n"
+"QPushButton:pressed{\n"
+"	background-color: rgb(0, 0, 0);\n"
+"	color: rgb(0, 255, 0);\n"
+"}\n"
+"QPushButton:disabled{\n"
+"	background-color: rgb(25, 25, 25);\n"
+"	color: rgb(0, 255, 0);\n"
+"    border: 0px solid #8f8f91;\n"
+"}\n"
+"QComboBox{\n"
+"	background-color: rgb(0, 0, 0);\n"
+"	selection-background-color: rgb(0, 255, 0);\n"
+"	selection-color: rgb(0, 0, 0);\n"
+"	color: rgb(0, 255, 0);\n"
+"}\n"
+"QLineEdit\n"
+"{\n"
+"	border: 0px;\n"
+"	background-color: rgb(0, 0, 0);\n"
+"	selection-background-color: rgb(0, 255, 0);\n"
+"	selection-color: rgb(0, 0, 0);\n"
+"	color: rgb(0, 255, 0);\n"
+"}\n"
+"QLabel\n"
+"{\n"
+"	background-color: rgb(0, 0, 0);\n"
+"	selection-background-color: rgb(0, 255, 0);\n"
+"	selection-color: rgb(0, 0, 0);\n"
+"	color: rgb(0, 255, 0);\n"
+"}"));
         actionOptions = new QAction(MainWindow);
         actionOptions->setObjectName(QStringLiteral("actionOptions"));
         actionQuitter = new QAction(MainWindow);
@@ -89,57 +171,13 @@ public:
         bFind = new QPushButton(centralWidget);
         bFind->setObjectName(QStringLiteral("bFind"));
         bFind->setMaximumSize(QSize(150, 16777215));
-        bFind->setStyleSheet(QLatin1String("QPushButton {\n"
-"    border: 2px solid #8f8f91;\n"
-"    border-radius: 6px;    \n"
-"	background-color: rgb(0, 0, 0);\n"
-"    min-width: 80px;	\n"
-"	color: rgb(0, 255, 0);\n"
-"}\n"
-"\n"
-"QPushButton:hover {\n"
-"   \n"
-"	background-color: rgb(0, 255, 0);\n"
-"	color: rgb(0, 0, 0);\n"
-"}\n"
-"\n"
-"QPushButton:pressed{\n"
-"	background-color: rgb(0, 0, 0);\n"
-"	color: rgb(0, 255, 0);\n"
-"}\n"
-"QPushButton:disabled{\n"
-"	background-color: rgb(25, 25, 25);\n"
-"	color: rgb(0, 255, 0);\n"
-"    border: 0px solid #8f8f91;\n"
-"}"));
+        bFind->setStyleSheet(QStringLiteral(""));
 
         horizontalLayout->addWidget(bFind);
 
         top400 = new QPushButton(centralWidget);
         top400->setObjectName(QStringLiteral("top400"));
-        top400->setStyleSheet(QLatin1String("QPushButton {\n"
-"    border: 2px solid #8f8f91;\n"
-"    border-radius: 6px;    \n"
-"	background-color: rgb(0, 0, 0);\n"
-"    min-width: 80px;	\n"
-"	color: rgb(0, 255, 0);\n"
-"}\n"
-"\n"
-"QPushButton:hover {\n"
-"   \n"
-"	background-color: rgb(0, 255, 0);\n"
-"	color: rgb(0, 0, 0);\n"
-"}\n"
-"\n"
-"QPushButton:pressed{\n"
-"	background-color: rgb(0, 0, 0);\n"
-"	color: rgb(0, 255, 0);\n"
-"}\n"
-"QPushButton:disabled{\n"
-"	background-color: rgb(25, 25, 25);\n"
-"	color: rgb(0, 255, 0);\n"
-"    border: 0px solid #8f8f91;\n"
-"}"));
+        top400->setStyleSheet(QStringLiteral(""));
 
         horizontalLayout->addWidget(top400);
 
@@ -156,29 +194,7 @@ public:
 
         reload = new QPushButton(centralWidget);
         reload->setObjectName(QStringLiteral("reload"));
-        reload->setStyleSheet(QLatin1String("QPushButton {\n"
-"    border: 2px solid #8f8f91;\n"
-"    border-radius: 6px;    \n"
-"	background-color: rgb(0, 0, 0);\n"
-"    min-width: 80px;	\n"
-"	color: rgb(0, 255, 0);\n"
-"}\n"
-"\n"
-"QPushButton:hover {\n"
-"   \n"
-"	background-color: rgb(0, 255, 0);\n"
-"	color: rgb(0, 0, 0);\n"
-"}\n"
-"\n"
-"QPushButton:pressed{\n"
-"	background-color: rgb(0, 0, 0);\n"
-"	color: rgb(0, 255, 0);\n"
-"}\n"
-"QPushButton:disabled{\n"
-"	background-color: rgb(25, 25, 25);\n"
-"	color: rgb(0, 255, 0);\n"
-"    border: 0px solid #8f8f91;\n"
-"}"));
+        reload->setStyleSheet(QStringLiteral(""));
 
         horizontalLayout_2->addWidget(reload);
 
@@ -227,26 +243,7 @@ public:
         listTorrent->setHorizontalHeaderItem(5, __qtablewidgetitem5);
         listTorrent->setObjectName(QStringLiteral("listTorrent"));
         listTorrent->setMinimumSize(QSize(1000, 0));
-        listTorrent->setStyleSheet(QLatin1String("QTableView\n"
-"{\n"
-"	background-color: rgb(0, 0, 0);\n"
-"	color: rgb(0, 255, 0);\n"
-"	gridline-color: rgb(53, 53, 53);\n"
-"}\n"
-"::section\n"
-"{\n"
-"	background-color: rgb(0, 0, 0);\n"
-"	color: rgb(0, 255, 0);\n"
-"}\n"
-"::horizontalheader\n"
-"{\n"
-"	color: rgb(0,0,0);\n"
-"}\n"
-"::disabled\n"
-"{\n"
-"	background-color: rgb(20, 20, 20);\n"
-"	color: rgb(0,0,0);\n"
-"}"));
+        listTorrent->setStyleSheet(QStringLiteral(""));
         listTorrent->setCornerButtonEnabled(true);
         listTorrent->horizontalHeader()->setProperty("showSortIndicator", QVariant(false));
         listTorrent->verticalHeader()->setVisible(false);

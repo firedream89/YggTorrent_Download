@@ -14,10 +14,91 @@
    <string>YggTorrent Downloader</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color: rgb(0, 0, 0);
+   <string notr="true">QWidget
+{
+background-color: rgb(0, 0, 0);
 selection-background-color: rgb(0, 255, 0);
 selection-color: rgb(0, 0, 0);
-color: rgb(0, 255, 0);</string>
+color: rgb(0, 255, 0);
+}
+QMenu
+{
+background-color: rgb(0, 0, 0);
+selection-background-color: rgb(0, 255, 0);
+selection-color: rgb(0, 0, 0);
+color: rgb(0, 255, 0);
+}
+QMenu:hover
+{
+background-color: rgb(0, 255, 0);
+color: rgb(0, 0, 0);
+}
+QTableView
+{
+	border: 0px;
+	background-color: rgb(0, 0, 0);
+	color: rgb(0, 255, 0);
+	gridline-color: rgb(53, 53, 53);
+}
+QTableView:section
+{
+	background-color: rgb(0, 0, 0);
+	color: rgb(0, 255, 0);
+}
+QHeaderView:section
+{
+	background-color: rgb(0, 0, 0);
+	color: rgb(0, 255, 0);
+}
+QTableView:disabled
+{
+	background-color: rgb(20, 20, 20);
+	color: rgb(0,0,0);
+}
+QPushButton {
+    border: 2px solid #8f8f91;
+    border-radius: 6px;    
+	background-color: rgb(0, 0, 0);
+    min-width: 80px;	
+	color: rgb(0, 255, 0);
+}
+
+QPushButton:hover {
+   
+	background-color: rgb(0, 255, 0);
+	color: rgb(0, 0, 0);
+}
+
+QPushButton:pressed{
+	background-color: rgb(0, 0, 0);
+	color: rgb(0, 255, 0);
+}
+QPushButton:disabled{
+	background-color: rgb(25, 25, 25);
+	color: rgb(0, 255, 0);
+    border: 0px solid #8f8f91;
+}
+QComboBox{
+	background-color: rgb(0, 0, 0);
+	selection-background-color: rgb(0, 255, 0);
+	selection-color: rgb(0, 0, 0);
+	color: rgb(0, 255, 0);
+}
+QLineEdit
+{
+	border: 0px;
+	background-color: rgb(0, 0, 0);
+	selection-background-color: rgb(0, 255, 0);
+	selection-color: rgb(0, 0, 0);
+	color: rgb(0, 255, 0);
+}
+QLabel
+{
+	background-color: rgb(0, 0, 0);
+	selection-background-color: rgb(0, 255, 0);
+	selection-color: rgb(0, 0, 0);
+	color: rgb(0, 255, 0);
+}</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
@@ -39,29 +120,7 @@ color: rgb(0, 255, 0);</string>
          </size>
         </property>
         <property name="styleSheet">
-         <string notr="true">QPushButton {
-    border: 2px solid #8f8f91;
-    border-radius: 6px;    
-	background-color: rgb(0, 0, 0);
-    min-width: 80px;	
-	color: rgb(0, 255, 0);
-}
-
-QPushButton:hover {
-   
-	background-color: rgb(0, 255, 0);
-	color: rgb(0, 0, 0);
-}
-
-QPushButton:pressed{
-	background-color: rgb(0, 0, 0);
-	color: rgb(0, 255, 0);
-}
-QPushButton:disabled{
-	background-color: rgb(25, 25, 25);
-	color: rgb(0, 255, 0);
-    border: 0px solid #8f8f91;
-}</string>
+         <string notr="true"/>
         </property>
         <property name="text">
          <string>Rechercher</string>
@@ -71,29 +130,7 @@ QPushButton:disabled{
       <item>
        <widget class="QPushButton" name="top400">
         <property name="styleSheet">
-         <string notr="true">QPushButton {
-    border: 2px solid #8f8f91;
-    border-radius: 6px;    
-	background-color: rgb(0, 0, 0);
-    min-width: 80px;	
-	color: rgb(0, 255, 0);
-}
-
-QPushButton:hover {
-   
-	background-color: rgb(0, 255, 0);
-	color: rgb(0, 0, 0);
-}
-
-QPushButton:pressed{
-	background-color: rgb(0, 0, 0);
-	color: rgb(0, 255, 0);
-}
-QPushButton:disabled{
-	background-color: rgb(25, 25, 25);
-	color: rgb(0, 255, 0);
-    border: 0px solid #8f8f91;
-}</string>
+         <string notr="true"/>
         </property>
         <property name="text">
          <string>Top 400</string>
@@ -141,29 +178,7 @@ QPushButton:disabled{
       <item>
        <widget class="QPushButton" name="reload">
         <property name="styleSheet">
-         <string notr="true">QPushButton {
-    border: 2px solid #8f8f91;
-    border-radius: 6px;    
-	background-color: rgb(0, 0, 0);
-    min-width: 80px;	
-	color: rgb(0, 255, 0);
-}
-
-QPushButton:hover {
-   
-	background-color: rgb(0, 255, 0);
-	color: rgb(0, 0, 0);
-}
-
-QPushButton:pressed{
-	background-color: rgb(0, 0, 0);
-	color: rgb(0, 255, 0);
-}
-QPushButton:disabled{
-	background-color: rgb(25, 25, 25);
-	color: rgb(0, 255, 0);
-    border: 0px solid #8f8f91;
-}</string>
+         <string notr="true"/>
         </property>
         <property name="text">
          <string>  Recharger Téléchargement  </string>
@@ -219,26 +234,7 @@ QPushButton:disabled{
        </size>
       </property>
       <property name="styleSheet">
-       <string notr="true">QTableView
-{
-	background-color: rgb(0, 0, 0);
-	color: rgb(0, 255, 0);
-	gridline-color: rgb(53, 53, 53);
-}
-::section
-{
-	background-color: rgb(0, 0, 0);
-	color: rgb(0, 255, 0);
-}
-::horizontalheader
-{
-	color: rgb(0,0,0);
-}
-::disabled
-{
-	background-color: rgb(20, 20, 20);
-	color: rgb(0,0,0);
-}</string>
+       <string notr="true"/>
       </property>
       <property name="cornerButtonEnabled">
        <bool>true</bool>

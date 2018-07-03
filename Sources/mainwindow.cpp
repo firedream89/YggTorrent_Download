@@ -14,6 +14,7 @@ MainWindow::MainWindow(QWidget *parent) :
     rt = new QWebEngineView;
     rt->setObjectName("rt");
     ui->reload->setEnabled(false);
+    ui->listTorrent->horizontalHeader()->setStyleSheet("background-color: rgb(0, 0, 0);");
 
     QDir d;
     d.mkdir("download");
@@ -67,7 +68,7 @@ void MainWindow::About()
     layout->addRow("Auteur",&auteur);
     layout->addRow("Licence",&licence);
     layout->addRow("Sources",&github);
-    QDialog *fen = new QDialog;
+    QDialog *fen = new QDialog(this);
     fen->setLayout(layout);
     fen->setWindowTitle("A Propos de " + this->windowTitle());
     fen->exec();
@@ -111,15 +112,6 @@ void MainWindow::UpdateDownCount()
         timer2.stop();
     if(!timer2.isActive())
         ui->reload->setEnabled(true);
-    SaveText(rt);
-
-    
-    //test
-    QFile file("web_Temp.txt");
-    if(!file.open(QIODevice::ReadOnly))
-        qDebug() << "Error open file";
-    qDebug() << file.readAll().split(' ').at(18).split('\n');
-    file.close();
 }
 
 void MainWindow::Authentication(QNetworkReply *reply, QAuthenticator *auth)
