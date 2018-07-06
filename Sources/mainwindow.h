@@ -39,6 +39,15 @@ public:
     QString Encrypt(QString text);
     QString Decrypt(QString text);
 
+private:
+    Ui::MainWindow *ui;
+    QWebEngineView *web;
+    QWebEngineView *rt;
+    QEventLoop loop;
+    QTimer timer;
+    QTimer timer2;
+    QString m_Filename, darkStyle;
+
 private slots:
     void Process_Find(QString link = 0);
     void SaveTorrent(int row);
@@ -55,17 +64,20 @@ private slots:
     void Load(int progress);
     void Top400();
 
+    void LightStyle(){
+        this->setStyleSheet("");
+        QSettings s("Yggtorrent-download");
+        s.setValue("style",1);
+    }
+    void DarkStyle(){
+        this->setStyleSheet(darkStyle);
+        QSettings s("Yggtorrent-download");
+        s.setValue("style",0);
+    }
+
 signals:
     void finished();
 
-private:
-    Ui::MainWindow *ui;
-    QWebEngineView *web;
-    QWebEngineView *rt;
-    QEventLoop loop;
-    QTimer timer;
-    QTimer timer2;
-    QString m_Filename;
 };
 
 #endif // MAINWINDOW_H

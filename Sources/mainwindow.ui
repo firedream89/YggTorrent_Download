@@ -113,6 +113,12 @@ QLabel
       </item>
       <item>
        <widget class="QPushButton" name="bFind">
+        <property name="minimumSize">
+         <size>
+          <width>84</width>
+          <height>0</height>
+         </size>
+        </property>
         <property name="maximumSize">
          <size>
           <width>150</width>
@@ -143,6 +149,12 @@ QLabel
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
        <widget class="QComboBox" name="comboBox">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>30</height>
+         </size>
+        </property>
         <item>
          <property name="text">
           <string>Tout</string>
@@ -177,6 +189,12 @@ QLabel
       </item>
       <item>
        <widget class="QPushButton" name="reload">
+        <property name="minimumSize">
+         <size>
+          <width>84</width>
+          <height>20</height>
+         </size>
+        </property>
         <property name="styleSheet">
          <string notr="true"/>
         </property>
@@ -292,7 +310,15 @@ QLabel
     <property name="title">
      <string>Menu</string>
     </property>
+    <widget class="QMenu" name="menuStyle">
+     <property name="title">
+      <string>Style</string>
+     </property>
+     <addaction name="actionDark"/>
+     <addaction name="actionLight"/>
+    </widget>
     <addaction name="separator"/>
+    <addaction name="menuStyle"/>
     <addaction name="actionOptions"/>
     <addaction name="actionA_Propos"/>
     <addaction name="actionA_Propos_de_Qt"/>
@@ -319,6 +345,16 @@ QLabel
   <action name="actionA_Propos_de_Qt">
    <property name="text">
     <string>A Propos de Qt</string>
+   </property>
+  </action>
+  <action name="actionDark">
+   <property name="text">
+    <string>Dark</string>
+   </property>
+  </action>
+  <action name="actionLight">
+   <property name="text">
+    <string>Light</string>
    </property>
   </action>
  </widget>

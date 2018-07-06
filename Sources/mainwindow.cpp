@@ -1,20 +1,23 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-QString version = "1.03";
 #define PKEY "2 54 86 52 2 15 32 58 62 42 1 6 85 215 364 8"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+    qApp->setApplicationVersion("1.04");
+
     ui->setupUi(this);
     web = new QWebEngineView;
     web->setObjectName("web");
     rt = new QWebEngineView;
     rt->setObjectName("rt");
     ui->reload->setEnabled(false);
-    ui->listTorrent->horizontalHeader()->setStyleSheet("background-color: rgb(0, 0, 0);");
+    ui->downCount->setTextFormat(Qt::RichText);
+
+    darkStyle = this->styleSheet();
 
     QDir d;
     d.mkdir("download");
@@ -23,6 +26,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     QSettings settings("Yggtorrent-download");
     ui->eFind->setText(settings.value("Find").toString());
+    if(settings.value("style").toBool())
+        LightStyle();
+    else
+        DarkStyle();
 
     connect(&timer,SIGNAL(timeout()),&loop,SLOT(quit()));
     connect(&timer2,SIGNAL(timeout()),this,SLOT(UpdateDownCount()));
@@ -39,11 +46,15 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionOptions,SIGNAL(triggered(bool)),this,SLOT(Show_Options()));
     connect(ui->reload,SIGNAL(clicked(bool)),this,SLOT(UpdateDownCount()));
     connect(ui->top400,SIGNAL(clicked(bool)),this,SLOT(Top400()));
+    connect(ui->actionDark,SIGNAL(triggered(bool)),this,SLOT(DarkStyle()));
+    connect(ui->actionLight,SIGNAL(triggered(bool)),this,SLOT(LightStyle()));
 
     connect(rt->page(),SIGNAL(authenticationRequired(QUrl,QAuthenticator*)),this,SLOT(Authentication(QUrl,QAuthenticator*)));
 
     ui->downCount->setText("Init...");
+    ui->listTorrent->setColumnHidden(5,true);
     timer2.start();
+
 }
 
 MainWindow::~MainWindow()
@@ -59,7 +70,7 @@ MainWindow::~MainWindow()
 void MainWindow::About()
 {
     QFormLayout *layout = new QFormLayout;
-    QLabel vVersion(version);
+    QLabel vVersion(qApp->applicationVersion());
     QLabel auteur("Kévin BRIAND");
     QLabel licence("Ce logiciel est sous licence GNU LGPLv3");
     QLabel github("<a href='https://github.com/firedream89?tab=repositories'>ici</a>");
@@ -85,33 +96,55 @@ void MainWindow::Authentication(QUrl url, QAuthenticator *auth)
 void MainWindow::UpdateDownCount()
 {
     ui->reload->setEnabled(false);
+    ui->downCount->setText("<FONT color=red>" + ui->downCount->text() + "</FONT>");
+
     QTimer *t = new QTimer;
     QEventLoop *lp = new QEventLoop;
     QSettings settings("Yggtorrent-download");
-    QUrl url("http://" + settings.value("ip").toString() + "/rutorrent/");
-
     connect(t,SIGNAL(timeout()),lp,SLOT(quit()));
     connect(rt,SIGNAL(loadFinished(bool)),lp,SLOT(quit()));
 
-    if(url != rt->url())//si page non chargé
+    rt->load(QUrl("http://" + settings.value("ip").toString() + ":9999/scrape"));
+    t->start(30000);
+    lp->exec();
+    SaveText(rt);
+
+    QFile file("web_Temp.txt");
+    if(!file.open(QIODevice::ReadOnly))
+        qDebug() << "Fail to open file";
+    QTextStream str(&file);
+
+    ui->downCount->setText("0");
+
+    QString result;
+    while(!str.atEnd())
     {
-        qDebug() << "Load rutorrent" << url.toString();
-        rt->load(url);
-        t->start(10000);
-        lp->exec();
-        t->start(10000);
-        lp->exec();
+        QStringList torrent = str.readLine().split("\"");
+
+        if(torrent.contains("ERR_CONNECTION_REFUSED"))
+            ui->downCount->setText("ERROR");
+        else
+        {
+            for(int i = 0;i<torrent.count();i++)
+            {
+                if(torrent.at(i).contains("torrent") && i+8 <= torrent.count())
+                {
+                    if(torrent.at(i+8) != "100%")
+                        result += "\n" + torrent.at(i+4) + "  " + torrent.at(i+8);
+                    i += 7;
+                }
+            }
+        }
+        ui->downCount->setToolTip(result);
+        ui->downCount->setText(QString::number(result.split("\n").count()-1));
+
+        //Arret timer si plus aucun torrent en téléchargement
+        if(ui->downCount->text().toInt() == 0)
+            timer2.stop();
+        if(!timer2.isActive())
+            ui->reload->setEnabled(true);
     }
 
-    //Récupération de la variable téléchargement en cours
-    QString var = InsertJavaScript(rt,"theWebUI.labels['-_-_-dls-_-_-'];").toString();
-    ui->downCount->setText(var);
-
-    //Arret timer si plus aucun torrent en téléchargement
-    if(ui->downCount->text().toInt() == 0)
-        timer2.stop();
-    if(!timer2.isActive())
-        ui->reload->setEnabled(true);
 }
 
 void MainWindow::Authentication(QNetworkReply *reply, QAuthenticator *auth)

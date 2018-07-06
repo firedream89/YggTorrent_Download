@@ -19,8 +19,8 @@
 
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_MainWindow_t {
-    QByteArrayData data[27];
-    char stringdata0[274];
+    QByteArrayData data[29];
+    char stringdata0[295];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -55,7 +55,9 @@ QT_MOC_LITERAL(22, 231, 15), // "UpdateDownCount"
 QT_MOC_LITERAL(23, 247, 5), // "About"
 QT_MOC_LITERAL(24, 253, 4), // "Load"
 QT_MOC_LITERAL(25, 258, 8), // "progress"
-QT_MOC_LITERAL(26, 267, 6) // "Top400"
+QT_MOC_LITERAL(26, 267, 6), // "Top400"
+QT_MOC_LITERAL(27, 274, 10), // "LightStyle"
+QT_MOC_LITERAL(28, 285, 9) // "DarkStyle"
 
     },
     "MainWindow\0finished\0\0Process_Find\0"
@@ -65,7 +67,8 @@ QT_MOC_LITERAL(26, 267, 6) // "Top400"
     "QAuthenticator*\0auth\0QNetworkReply*\0"
     "reply\0SendRequestToruTorrent\0filename\0"
     "Import\0Export\0UpdateDownCount\0About\0"
-    "Load\0progress\0Top400"
+    "Load\0progress\0Top400\0LightStyle\0"
+    "DarkStyle"
 };
 #undef QT_MOC_LITERAL
 
@@ -75,7 +78,7 @@ static const uint qt_meta_data_MainWindow[] = {
        7,       // revision
        0,       // classname
        0,    0, // classinfo
-      17,   14, // methods
+      19,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -83,25 +86,27 @@ static const uint qt_meta_data_MainWindow[] = {
        1,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    0,   99,    2, 0x06 /* Public */,
+       1,    0,  109,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-       3,    1,  100,    2, 0x08 /* Private */,
-       3,    0,  103,    2, 0x28 /* Private | MethodCloned */,
-       5,    1,  104,    2, 0x08 /* Private */,
-       7,    1,  107,    2, 0x08 /* Private */,
-      10,    0,  110,    2, 0x08 /* Private */,
-      11,    0,  111,    2, 0x08 /* Private */,
-      12,    2,  112,    2, 0x08 /* Private */,
-      12,    2,  117,    2, 0x08 /* Private */,
-      18,    1,  122,    2, 0x08 /* Private */,
-      18,    0,  125,    2, 0x28 /* Private | MethodCloned */,
-      20,    0,  126,    2, 0x08 /* Private */,
-      21,    0,  127,    2, 0x08 /* Private */,
-      22,    0,  128,    2, 0x08 /* Private */,
-      23,    0,  129,    2, 0x08 /* Private */,
-      24,    1,  130,    2, 0x08 /* Private */,
-      26,    0,  133,    2, 0x08 /* Private */,
+       3,    1,  110,    2, 0x08 /* Private */,
+       3,    0,  113,    2, 0x28 /* Private | MethodCloned */,
+       5,    1,  114,    2, 0x08 /* Private */,
+       7,    1,  117,    2, 0x08 /* Private */,
+      10,    0,  120,    2, 0x08 /* Private */,
+      11,    0,  121,    2, 0x08 /* Private */,
+      12,    2,  122,    2, 0x08 /* Private */,
+      12,    2,  127,    2, 0x08 /* Private */,
+      18,    1,  132,    2, 0x08 /* Private */,
+      18,    0,  135,    2, 0x28 /* Private | MethodCloned */,
+      20,    0,  136,    2, 0x08 /* Private */,
+      21,    0,  137,    2, 0x08 /* Private */,
+      22,    0,  138,    2, 0x08 /* Private */,
+      23,    0,  139,    2, 0x08 /* Private */,
+      24,    1,  140,    2, 0x08 /* Private */,
+      26,    0,  143,    2, 0x08 /* Private */,
+      27,    0,  144,    2, 0x08 /* Private */,
+      28,    0,  145,    2, 0x08 /* Private */,
 
  // signals: parameters
     QMetaType::Void,
@@ -122,6 +127,8 @@ static const uint qt_meta_data_MainWindow[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void, QMetaType::Int,   25,
+    QMetaType::Void,
+    QMetaType::Void,
     QMetaType::Void,
 
        0        // eod
@@ -150,6 +157,8 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 14: _t->About(); break;
         case 15: _t->Load((*reinterpret_cast< int(*)>(_a[1]))); break;
         case 16: _t->Top400(); break;
+        case 17: _t->LightStyle(); break;
+        case 18: _t->DarkStyle(); break;
         default: ;
         }
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
@@ -208,13 +217,13 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 17)
+        if (_id < 19)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 17;
+        _id -= 19;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 17)
+        if (_id < 19)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 17;
+        _id -= 19;
     }
     return _id;
 }

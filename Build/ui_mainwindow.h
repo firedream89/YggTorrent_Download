@@ -37,6 +37,8 @@ public:
     QAction *actionQuitter;
     QAction *actionA_Propos;
     QAction *actionA_Propos_de_Qt;
+    QAction *actionDark;
+    QAction *actionLight;
     QWidget *centralWidget;
     QGridLayout *gridLayout;
     QHBoxLayout *horizontalLayout;
@@ -54,6 +56,7 @@ public:
     QTableWidget *listTorrent;
     QMenuBar *menuBar;
     QMenu *menuMenu;
+    QMenu *menuStyle;
 
     void setupUi(QMainWindow *MainWindow)
     {
@@ -154,6 +157,10 @@ public:
         actionA_Propos->setObjectName(QStringLiteral("actionA_Propos"));
         actionA_Propos_de_Qt = new QAction(MainWindow);
         actionA_Propos_de_Qt->setObjectName(QStringLiteral("actionA_Propos_de_Qt"));
+        actionDark = new QAction(MainWindow);
+        actionDark->setObjectName(QStringLiteral("actionDark"));
+        actionLight = new QAction(MainWindow);
+        actionLight->setObjectName(QStringLiteral("actionLight"));
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         gridLayout = new QGridLayout(centralWidget);
@@ -170,6 +177,7 @@ public:
 
         bFind = new QPushButton(centralWidget);
         bFind->setObjectName(QStringLiteral("bFind"));
+        bFind->setMinimumSize(QSize(84, 0));
         bFind->setMaximumSize(QSize(150, 16777215));
         bFind->setStyleSheet(QStringLiteral(""));
 
@@ -189,11 +197,13 @@ public:
         horizontalLayout_2->setObjectName(QStringLiteral("horizontalLayout_2"));
         comboBox = new QComboBox(centralWidget);
         comboBox->setObjectName(QStringLiteral("comboBox"));
+        comboBox->setMinimumSize(QSize(0, 30));
 
         horizontalLayout_2->addWidget(comboBox);
 
         reload = new QPushButton(centralWidget);
         reload->setObjectName(QStringLiteral("reload"));
+        reload->setMinimumSize(QSize(84, 20));
         reload->setStyleSheet(QStringLiteral(""));
 
         horizontalLayout_2->addWidget(reload);
@@ -256,15 +266,20 @@ public:
         menuBar->setGeometry(QRect(0, 0, 1414, 25));
         menuMenu = new QMenu(menuBar);
         menuMenu->setObjectName(QStringLiteral("menuMenu"));
+        menuStyle = new QMenu(menuMenu);
+        menuStyle->setObjectName(QStringLiteral("menuStyle"));
         MainWindow->setMenuBar(menuBar);
 
         menuBar->addAction(menuMenu->menuAction());
         menuMenu->addSeparator();
+        menuMenu->addAction(menuStyle->menuAction());
         menuMenu->addAction(actionOptions);
         menuMenu->addAction(actionA_Propos);
         menuMenu->addAction(actionA_Propos_de_Qt);
         menuMenu->addSeparator();
         menuMenu->addAction(actionQuitter);
+        menuStyle->addAction(actionDark);
+        menuStyle->addAction(actionLight);
 
         retranslateUi(MainWindow);
         QObject::connect(eFind, SIGNAL(returnPressed()), bFind, SLOT(click()));
@@ -279,6 +294,8 @@ public:
         actionQuitter->setText(QApplication::translate("MainWindow", "Quitter", Q_NULLPTR));
         actionA_Propos->setText(QApplication::translate("MainWindow", "A Propos", Q_NULLPTR));
         actionA_Propos_de_Qt->setText(QApplication::translate("MainWindow", "A Propos de Qt", Q_NULLPTR));
+        actionDark->setText(QApplication::translate("MainWindow", "Dark", Q_NULLPTR));
+        actionLight->setText(QApplication::translate("MainWindow", "Light", Q_NULLPTR));
         eFind->setPlaceholderText(QApplication::translate("MainWindow", "Recherche", Q_NULLPTR));
         bFind->setText(QApplication::translate("MainWindow", "Rechercher", Q_NULLPTR));
         top400->setText(QApplication::translate("MainWindow", "Top 400", Q_NULLPTR));
@@ -308,6 +325,7 @@ public:
         QTableWidgetItem *___qtablewidgetitem5 = listTorrent->horizontalHeaderItem(5);
         ___qtablewidgetitem5->setText(QApplication::translate("MainWindow", "Lien", Q_NULLPTR));
         menuMenu->setTitle(QApplication::translate("MainWindow", "Menu", Q_NULLPTR));
+        menuStyle->setTitle(QApplication::translate("MainWindow", "Style", Q_NULLPTR));
     } // retranslateUi
 
 };
