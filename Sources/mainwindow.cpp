@@ -7,7 +7,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-    qApp->setApplicationVersion("1.04");
+    qApp->setApplicationVersion("1.05");
 
     ui->setupUi(this);
     web = new QWebEngineView;
@@ -105,7 +105,7 @@ void MainWindow::UpdateDownCount()
     connect(rt,SIGNAL(loadFinished(bool)),lp,SLOT(quit()));
 
     rt->load(QUrl("http://" + settings.value("ip").toString() + ":9999/scrape"));
-    t->start(30000);
+    t->start(45000);
     lp->exec();
     SaveText(rt);
 
@@ -130,8 +130,8 @@ void MainWindow::UpdateDownCount()
                 if(torrent.at(i).contains("torrent") && i+8 <= torrent.count())
                 {
                     if(torrent.at(i+8) != "100%")
-                        result += "\n" + torrent.at(i+4) + "  " + torrent.at(i+8);
-                    i += 7;
+                        result += "\n" + torrent.at(i+4) + "  " + torrent.at(i+8) + " " + torrent.at(i+12);
+                    i += 11;
                 }
             }
         }
